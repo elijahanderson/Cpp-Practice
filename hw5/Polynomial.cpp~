@@ -1,0 +1,93 @@
+#include "Polynomial.h"
+#include <cmath>
+#include <iostream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+Polynomial::Polynomial(int pDegree, double pCoeffs[])
+  : deg(pDegree), coeffs(pCoeffs) {
+  // no need for any code here
+  cout << sizeof(double) << endl; // prints '8' each time even when the size of coeffs is not 8
+}
+
+Polynomial::~Polynomial() {
+  // size = (size of entire arr) / (size of one double) = number of elements
+  int size = sizeof(coeffs) / sizeof(double);
+  for (int i = 0; i < size; i++)
+    delete (coeffs+i);
+}
+
+bool Polynomial::operator==(const Polynomial &other) {
+  // check for values, so must derefence the coeffs
+  if (deg == other.deg && *coeffs == *(other.coeffs))
+    return true;
+  return false;
+}
+
+bool Polynomial::operator!=(const Polynomial &other) {
+  // use previously defined operator== for this -- just return opposite
+  return !(*this == other); 
+}
+
+int Polynomial::getDegree() const {
+  return deg;
+}
+
+double Polynomial::getCoeff(const int deg) const {
+  return coeffs[deg];
+}
+
+void Polynomial::setCoeff(const int deg, const double nCoeff) {
+  coeffs[deg] = nCoeff;
+}
+
+double Polynomial::evalAt(const double val) const {
+  double returnVal = 0.0;
+  // loop through the coeffs at each degree, continuously add to returnVal
+  for(int i = deg; i >= 0; i--) {
+    returnVal += coeffs[i] * pow(val, i);
+  }
+  return returnVal;
+}
+
+void Polynomial::toString(string &asString) const {
+  stringstream s;
+  for(int i = deg; i >= 0; i--) {
+    // if the deg is 0, no need to print out the x or the ^deg
+    if (i == 0)
+      s << coeffs[i];
+    // don't print anything if the coefficient is 0
+    else if (coeffs[i] == 0)
+      ;
+    // no need to print ^deg if deg == 1
+    else if (i == 1) {
+      s << coeffs[i] << "x" << " + " ;
+    }
+    // normal print
+    else if (coeffs[i] != 0) {
+      s << coeffs[i] << "x^" << i << " + ";
+    }
+    else
+      ;
+  }
+  // convert sstream s into normal string, put it in asString
+  asString = s.str();
+}
+
+bool Polynomial::findZeroes(double zeroes[]) const {
+  // if the poly is cubic or a negative degree, don't bother
+  if (deg >= 3 || deg < 0)
+    return false;
+  // quadratic function -> use quadratic formula
+  if (deg == 2) {
+    zeroes[0] = (-(coeffs[deg-1]) + sqrt(coeffs[deg-1]*coeffs[deg-1] - (4 * coeffs[deg] * coeffs[deg-2]))) / (2 * coeffs[deg]);
+    zeroes[1] = (-(coeffs[deg-1]) - sqrt(coeffs[deg-1]*coeffs[deg-1] - (4 * coeffs[deg] * coeffs[deg-2]))) / (2 * coeffs[deg]);
+
+  }
+  else {
+    zeroes[0] = -(coeffs[deg-1] / coeffs[deg]);
+  }
+
+  return true;
+}

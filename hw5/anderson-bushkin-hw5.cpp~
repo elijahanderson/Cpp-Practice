@@ -1,0 +1,167 @@
+#include <iostream>
+#include <cmath>
+#include <sstream>
+using namespace std;
+
+// TODO -- fix negative integers in toString()
+
+////////////////////////////////////////////////////////
+// Write your code here: evalAt, toString, and findZeroes
+
+double evalAt(const double coefficients[], int deg, const double val) {
+  double returnVal = 0.0;
+  for(deg; deg >= 0; deg--) {
+    returnVal += coefficients[deg] * pow(val, deg);
+  }
+  return returnVal;
+}
+
+void toString(const double coefficients[], int deg, string &asString) {
+  stringstream s;
+  for(deg; deg >= 0; deg--) {
+
+    if (deg == 0)
+      s << coefficients[deg];
+    else if (deg == 1 && coefficients[deg] == 0)
+      ;
+    else if (deg == 1) {
+      s << coefficients[deg] << "x" << " + " ;
+    }
+    else if (deg == 1 && coefficients[deg] == 0)
+      ;
+    else if (coefficients[deg] != 0) {
+      s << coefficients[deg] << "x^" << deg << " + ";
+    }
+    else
+      ;
+  }
+  asString = s.str();
+}
+
+bool findZeroes(const double coeffs[], int deg, double zeros[]) {
+  if (deg >= 3 || deg < 0)
+    return false;
+  if (deg == 2) {
+    zeros[0] = (-(coeffs[deg-1]) + sqrt(coeffs[deg-1]*coeffs[deg-1] - (4 * coeffs[deg] * coeffs[deg-2]))) / (2 * coe\
+													     ffs[deg]);
+    zeros[1] = (-(coeffs[deg-1]) - sqrt(coeffs[deg-1]*coeffs[deg-1] - (4 * coeffs[deg] * coeffs[deg-2]))) / (2 * coe\
+													     ffs[deg]);
+
+  }
+  else {
+    zeros[0] = -(coeffs[deg-1] / coeffs[deg]);
+  }
+
+  return true;
+}
+
+void cubicExample(double coeffs[]) {
+  int degree = 3;
+
+  double * zeroes = NULL;
+  bool retValue = findZeroes(coeffs, degree, zeroes);
+  // We know retValue is false here, indicating that we don't support finding zeroes for
+  // cubic equations.
+
+  string asString;
+  toString(coeffs, degree, asString);
+
+  cout << "The cubic expression is: " << asString << ". We didn't try to find zeroes." << endl;
+  cout << "This polynomial, at x = 2.5, is: " << evalAt(coeffs, degree, 2.5) << endl;
+}
+
+void quadraticExample(double coeffs[]) {
+  int degree = 2;
+
+  double zeroes[2];
+  findZeroes(coeffs, degree, zeroes);
+
+  string asString;
+  toString(coeffs, degree, asString);
+
+  cout << asString << " has zeroes " << zeroes[0] << " and " << zeroes[1] << endl;
+  cout << "This polynomial, at x = 2.5, is: " << evalAt(coeffs, degree, 2.5) << endl;
+}
+
+void linearExample(double coeffs[]) {
+  int degree = 1;
+
+  double zeroes[1];
+  findZeroes(coeffs, degree, zeroes);
+
+  string asString;
+  toString(coeffs, degree, asString);
+
+  cout << asString << " has zero " << zeroes[0] << endl;
+  cout << "This polynomial, at x = 2.5, is: " << evalAt(coeffs, degree, 2.5) << endl;
+}
+
+
+int main(void) {
+  double c0[] = {2};
+  Polynomial p0(0, c0);
+
+  double c1[] = {3, -5};
+  Polynomial p1(1, c1);
+
+  double c2[] = {4, -7, 8};
+  Polynomial p2(2, c2);
+
+  double c5[] = {4,-6,12,-23,45,16};
+  Polynomial p5(5, c5);
+
+  cout << "==========\n";
+  string p0Str;
+  p0.toString(p0Str);
+  cout << p0Str << " is the polynomial." << endl;
+  cout << "At x=3, it is: " << p0.evalAt(3) << endl;
+
+  cout << "==========\n";
+  string p1Str;
+  p1.toString(p1Str);
+  cout << p1Str << " is the polynomial." << endl;
+  cout << "At x=3, it is: " << p1.evalAt(3) << endl;
+
+  cout << "==========\n";
+  string p2Str;
+  p2.toString(p2Str);
+  cout << p2Str << " is the polynomial." << endl;
+  cout << "At x=3, it is: " << p2.evalAt(3) << endl;
+
+  cout << "==========\n";
+  string p5Str;
+  p5.toString(p5Str);
+  cout << p5Str << " is the polynomial." << endl;
+  cout << "At x=3, it is: " << p5.evalAt(3) << endl;
+
+  cout << "==========\n";
+  double cAnother[] = {4, -7, 8};
+  Polynomial another(2, cAnother);
+
+  string anotherStr;
+  another.toString(anotherStr);
+
+  cout << anotherStr << " == " << p5Str << ": " << (another == p5) << endl;
+  cout << anotherStr << " != " << p5Str << ": " << (another != p5) << endl;
+  cout << anotherStr << " == " << p2Str << ": " << (another == p2) << endl;
+  cout << anotherStr << " != " << p2Str << ": " << (another != p2) << endl;
+
+  cout << "==========\n";
+  double c6[] = {2, 4, 1};
+  Polynomial p6(2, c6);
+  string p6Str;
+  p6.toString(p6Str);
+  cout << p6Str << " is the polynomial." << endl;
+
+  double zeroes[2];
+  p6.findZeroes(zeroes);
+  cout << "The zeroes are " << zeroes[0] << " and " << zeroes[1] << endl;
+
+  cout << "The degree is " << p6.getDegree() << "." << endl;
+  cout << "The coefficient of x^2 is " << p6.getCoeff(2) << "." << endl;
+  p6.setCoeff(2, 99);
+  p6.toString(p6Str);
+  cout << "After changing the coefficient of x^2, it is " << p6.getCoeff(2) << ", and the entire polynomial is " << p6Str << endl;
+
+  return 0;
+}
